@@ -1,0 +1,46 @@
+using hw.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+
+var builder = WebApplication.CreateBuilder(args);
+
+// Add services to the container.
+builder.Services.AddRazorPages();
+
+builder.Services.AddDbContext<AppDbContext>(
+    (sp, options) =>
+    {
+        var configuration = sp.GetRequiredService<IConfiguration>();
+        var connectionString = configuration.GetConnectionString("CosmosDB");
+        options.UseNpgsql(connectionString);
+    }
+);
+
+builder
+    .Services.AddDefaultIdentity<ApplicationUser>(options =>
+    {
+        options.SignIn.RequireConfirmedAccount = false;
+    })
+    .AddEntityFrameworkStores<AppDbContext>();
+
+var app = builder.Build();
+
+// Configure the HTTP request pipeline.
+if (!app.Environment.IsDevelopment())
+{
+    app.UseExceptionHandler("/Error");
+    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+    app.UseHsts();
+}
+
+app.UseHttpsRedirection();
+
+app.UseRouting();
+
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.MapStaticAssets();
+app.MapRazorPages().WithStaticAssets();
+
+app.Run();
