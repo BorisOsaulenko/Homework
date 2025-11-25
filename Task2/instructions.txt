@@ -1,0 +1,6 @@
+pyproject.toml: Declaration of project config, version, dependencies, python version, etc.
+poetry.lock: Exact versions of all dependencies.
+
+to reproduce: 
+poetry install
+poetry run python app.py
